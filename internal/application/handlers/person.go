@@ -58,6 +58,7 @@ func (h *PersonHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Not Found", http.StatusNotFound)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -90,8 +91,8 @@ func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Location", fmt.Sprintf("/pessoas/%s", createdPerson.ID))
 	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Location", fmt.Sprintf("/person/%s", createdPerson.ID))
 	json.NewEncoder(w).Encode(createdPerson)
 }
 
@@ -108,6 +109,6 @@ func (h *PersonHandler) GetCount(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(strconv.Itoa(count)))
 }
 
-func NewPersoHandler(factory factory.PersonFactory) *PersonHandler {
+func NewPersonHandler(factory factory.PersonFactory) *PersonHandler {
 	return &PersonHandler{factory:factory}
 }

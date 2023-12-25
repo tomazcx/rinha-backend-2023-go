@@ -19,7 +19,7 @@ func (a *ApplicationRouter) DefineRoutes(r *chi.Mux) {
 
 func NewApplicationRouter() *ApplicationRouter {
 	factory := factory.PersonFactory{}
-	handler := handlers.NewPersoHandler(factory)
+	handler := handlers.NewPersonHandler(factory)
 	return &ApplicationRouter{
 		handler: handler,
 	}

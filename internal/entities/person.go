@@ -11,7 +11,7 @@ type Person struct {
 	Name      string   `json:"nome"`
 	Nickname  string   `json:"apelido"`
 	Birthdate string   `json:"nascimento"`
-	Stack     []string `json:"string"`
+	Stack     []string `json:"stack"`
 }
 
 func (p *Person) StackStr() string {

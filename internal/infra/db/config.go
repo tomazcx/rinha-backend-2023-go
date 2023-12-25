@@ -21,6 +21,8 @@ func ConnectToDb(conf *config.Cfg) error {
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS pessoa (id UUID PRIMARY KEY,apelido VARCHAR(32) UNIQUE NOT NULL,nome VARCHAR(100) NOT NULL, nascimento DATE NOT NULL, stack TEXT)")
 
+	dbConn = db
+
 	return err
 }
 
