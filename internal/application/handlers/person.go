@@ -69,7 +69,7 @@ func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var dto person.CreatePessoaDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
-		http.Error(w, "Invalid entry", http.StatusUnprocessableEntity)
+		http.Error(w, "Invalid entry", http.StatusBadRequest)
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, person.ErrNicknameAlreadyRegistered) {
-			http.Error(w, "Nickname already registered", http.StatusConflict)
+			http.Error(w, "Nickname already registered", http.StatusUnprocessableEntity)
 			return
 		}
 

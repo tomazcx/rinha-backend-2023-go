@@ -6,10 +6,11 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"github.com/google/uuid"
 	"github.com/tomazcx/rinha-backend-go/config"
 	"github.com/tomazcx/rinha-backend-go/internal/application"
 	"github.com/tomazcx/rinha-backend-go/internal/infra/db"
-	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
@@ -25,6 +26,8 @@ func main() {
 	if err != nil { 
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
+	uuid.EnableRandPool()
+
 	r := chi.NewRouter() 
 	r.Use(middleware.Logger)
 	appRouter := application.NewApplicationRouter()

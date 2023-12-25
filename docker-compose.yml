@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  api1:
+  api1: &api
     build: .
     volumes:
       - .:/usr/local/app
@@ -17,22 +17,13 @@ services:
     command: go run cmd/api/main.go
     depends_on: 
       - db
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: '0.5GB'
   api2:
-    build: .
-    volumes:
-      - .:/usr/local/app
-    ports:
-      - 8000
-    environment:
-      - DB_NAME=rinha-backend
-      - DB_PORT=5432
-      - DB_USER=root
-      - DB_PASSWORD=admin
-      - DB_HOST=db
-      - WEB_PORT=8000
-    command: go run cmd/api/main.go
-    depends_on: 
-      - db
+    <<: *api
   nginx: 
     image: nginx:latest
     volumes:
@@ -42,6 +33,11 @@ services:
     depends_on:
       - api1
       - api2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: '0.5GB'
   db:
     image: postgres:alpine
     ports: 
@@ -52,6 +48,11 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=rinha-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: '1.5GB'
   pgadmin:
     image: dpage/pgadmin4
     tty: true
