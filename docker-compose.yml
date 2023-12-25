@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/usr/local/app
     ports:
-      - 8000:8000  
+      - 8000
     environment:
       - DB_NAME=rinha-backend
       - DB_PORT=5432
@@ -14,9 +14,34 @@ services:
       - DB_PASSWORD=admin
       - DB_HOST=db
       - WEB_PORT=8000
-    command: air -c air.toml
+    command: go run cmd/api/main.go
     depends_on: 
       - db
+  api2:
+    build: .
+    volumes:
+      - .:/usr/local/app
+    ports:
+      - 8000
+    environment:
+      - DB_NAME=rinha-backend
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASSWORD=admin
+      - DB_HOST=db
+      - WEB_PORT=8000
+    command: go run cmd/api/main.go
+    depends_on: 
+      - db
+  nginx: 
+    image: nginx:latest
+    volumes:
+      - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports: 
+      - 9999:80
+    depends_on:
+      - api1
+      - api2
   db:
     image: postgres:alpine
     ports: 
