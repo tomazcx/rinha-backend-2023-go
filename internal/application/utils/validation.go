@@ -11,11 +11,11 @@ var UnprocessableEntityError = errors.New("Invalid entry")
 
 func ValidatePerson(dto person.CreatePessoaDTO) error {
 
-	if len(dto.Name) > 32 || len(dto.Name) == 0 {	
+	if len(dto.Name) > 100 || len(dto.Name) == 0 {	
 		return UnprocessableEntityError
 	}
 
-	if len(dto.Nickname) > 100 || len(dto.Nickname) == 0 {	
+	if len(dto.Nickname) > 32 || len(dto.Nickname) == 0 {	
 		return UnprocessableEntityError
 	}
 
