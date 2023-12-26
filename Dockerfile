@@ -6,5 +6,4 @@ COPY . .
 
 EXPOSE 8000
 
-RUN go install github.com/cosmtrek/air@latest
 RUN go mod tidy
