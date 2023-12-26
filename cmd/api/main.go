@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 	"github.com/google/uuid"
 	"github.com/tomazcx/rinha-backend-go/config"
 	"github.com/tomazcx/rinha-backend-go/internal/application"
@@ -29,7 +28,7 @@ func main() {
 	uuid.EnableRandPool()
 
 	r := chi.NewRouter() 
-	r.Use(middleware.Logger)
+
 	appRouter := application.NewApplicationRouter()
 	appRouter.DefineRoutes(r)
 

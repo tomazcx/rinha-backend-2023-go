@@ -4,6 +4,4 @@ WORKDIR /usr/local/app
 
 COPY . .
 
-EXPOSE 8000
-
 RUN go mod tidy
