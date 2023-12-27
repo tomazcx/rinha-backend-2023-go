@@ -13,7 +13,7 @@ type PersonRepository struct {
 }
 
 func (r *PersonRepository) FindMany(t string) ([]entities.Person, error) {
-	stmt, err := r.db.Prepare("SELECT id, nome, apelido, nascimento, stack FROM pessoa WHERE searchable ILIKE '%' || $1 || '%' LIMIT 50")
+	stmt, err := r.db.Prepare("SELECT id, nome, apelido, nascimento, stack FROM pessoa WHERE searchable LIKE '%' || $1 || '%' LIMIT 50")
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (r *PersonRepository) Create(person *entities.Person) error {
 }
 
 func (r *PersonRepository) Count() (int, error) {
-	stmt, _ := r.db.Prepare("SELECT COUNT(*) FROM pessoa")
+	stmt, _ := r.db.Prepare("SELECT COUNT(1) FROM pessoa")
 	var count int
 	err := stmt.QueryRow().Scan(&count)
 
@@ -78,20 +78,20 @@ func (r *PersonRepository) Count() (int, error) {
 }
 
 func (r *PersonRepository) CheckNicknameTaken(nickname string) (bool, error) {
-	stmt, err := r.db.Prepare("SELECT EXISTS(SELECT * FROM pessoa WHERE apelido = $1)")
+	stmt, err := r.db.Prepare("SELECT COUNT(1) FROM pessoa WHERE apelido = $1")
 
 	if err != nil {
 		return false, errors.New("Error preparing the statement")
 	}
 
-	var nicknameTaken bool
+	var nicknameTaken int
 	_ = stmt.QueryRow(nickname).Scan(&nicknameTaken)
 
 	if err != nil {
 		return false, err
 	}
 
-	return nicknameTaken, nil
+	return nicknameTaken == 1, nil
 }
 
 func NewPersonRepository(db *sql.DB) *PersonRepository {

@@ -16,7 +16,7 @@ CREATE TABLE
 
 CREATE INDEX 
 	CONCURRENTLY IF NOT EXISTS idx_pessoa_trigram ON public.pessoa USING gist (
-		searchable gist_trgm_ops(siglen = 64)
+		searchable public.gist_trgm_ops(siglen = '64')
 	);
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_pessoa_apelido ON public.pessoa (apelido);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_pessoa_apelido ON public.pessoa USING btree (apelido);
