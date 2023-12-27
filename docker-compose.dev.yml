@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   api:
-    build: .
+    build: 
+        context: .
+        dockerfile: Dockerfile.dev
     volumes:
       - .:/usr/local/app
     ports:
@@ -14,7 +16,7 @@ services:
       - DB_PASSWORD=admin
       - DB_HOST=db
       - WEB_PORT=8000
-    command: .docker/entrypoint.dev.sh
+    command: air -c air.toml
     depends_on: 
       - db
   db:
@@ -23,6 +25,7 @@ services:
       - 5432:5432
     volumes:
       - postgres-db:/var/lib/postresql/data
+      - ./.docker/postgres/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=admin

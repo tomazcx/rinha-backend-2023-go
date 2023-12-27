@@ -1,11 +1,30 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:alpine
+    network_mode: host
+    volumes:
+      - postgres-db:/var/lib/postresql/data
+      - ./.docker/postgres/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=rinha-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: '1.5GB'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   api1: &api
     build: .
     network_mode: host
-    volumes:
-      - .:/usr/local/app
+    restart: always
     environment:
       - DB_NAME=rinha-backend
       - DB_PORT=5432
@@ -13,9 +32,14 @@ services:
       - DB_PASSWORD=admin
       - DB_HOST=localhost
       - WEB_PORT=8001
-    command: go run cmd/api/main.go
     depends_on: 
-      - db
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: '0.5GB'
   api2:
     <<: *api
     environment:
@@ -34,22 +58,5 @@ services:
         limits:
           cpus: '0.25'
           memory: '0.5GB'
-  db:
-    image: postgres:alpine
-    ports: 
-      - 5432:5432
-    volumes:
-      - postgres-db:/var/lib/postresql/data
-      - ./.docker/postgres/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=rinha-backend
-    deploy:
-      resources:
-        limits:
-          cpus: '0.75'
-          memory: '1.5GB'
-
 volumes:
   postgres-db:

@@ -14,14 +14,13 @@ type PersonRepository struct {
 }
 
 func (r *PersonRepository) FindMany(t string) ([]entities.Person, error) {
-	stmt, err := r.db.Prepare("SELECT id, nome, apelido, nascimento, stack FROM pessoa WHERE nome LIKE $1 OR apelido LIKE $2 OR stack LIKE $3 LIMIT 50")
+	stmt, err := r.db.Prepare("SELECT id, nome, apelido, nascimento, stack FROM pessoa WHERE searchable ILIKE '%' || $1 || '%' LIMIT 50")
 	if err != nil {
 		log.Printf("Error preparing the get many stmt: %v", err)
 		return nil, err
 	}
 
-	term := "%" + t + "%"
-	rows, err := stmt.Query(term, term, term)
+	rows, err := stmt.Query(t)
 	if err != nil {
 		log.Printf("Error fetching many people: %v", err)
 		return nil, errors.New("Error preparing the statement")
