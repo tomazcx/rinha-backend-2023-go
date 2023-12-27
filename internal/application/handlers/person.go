@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -22,7 +21,7 @@ func (h *PersonHandler) GetMany(w http.ResponseWriter, r *http.Request) {
 	term := r.URL.Query().Get("t")
 
 	if len(term) == 0 {
-		http.Error(w, "Invalid term", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -42,14 +41,14 @@ func (h *PersonHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
 	if len(id) == 0 {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	_, err := uuid.Parse(id)
 
 	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -57,7 +56,7 @@ func (h *PersonHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 	person, err := findPersonById.Execute(id)
 
 	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -69,12 +68,12 @@ func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var dto person.CreatePessoaDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
-		http.Error(w, "Invalid entry", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	if err := utils.ValidatePerson(dto); err != nil {
-		http.Error(w, "Invalid entry", http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -83,15 +82,15 @@ func (h *PersonHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, person.ErrNicknameAlreadyRegistered) {
-			http.Error(w, "Nickname already registered", http.StatusUnprocessableEntity)
+			w.WriteHeader(http.StatusUnprocessableEntity)
 			return
 		}
 
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Location", fmt.Sprintf("/pessoas/%s", createdPerson.ID))
+	w.Header().Set("Location", "/pessoas/" + createdPerson.ID)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdPerson)
 }
@@ -101,7 +100,7 @@ func (h *PersonHandler) GetCount(w http.ResponseWriter, r *http.Request) {
 	count, err := countPerson.Execute()
 
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	
@@ -111,4 +110,4 @@ func (h *PersonHandler) GetCount(w http.ResponseWriter, r *http.Request) {
 
 func NewPersonHandler(factory factory.PersonFactory) *PersonHandler {
 	return &PersonHandler{factory:factory}
-}
+} 

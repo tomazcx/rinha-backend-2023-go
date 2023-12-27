@@ -6,16 +6,21 @@ services:
     network_mode: host
     volumes:
       - postgres-db:/var/lib/postresql/data
-      - ./.docker/postgres/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./.docker/postgres/:/docker-entrypoint-initdb.d/
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=rinha-backend
+    command: [
+      "postgres",
+      "-c",
+      "config_file=/docker-entrypoint-initdb.d/postgresql.conf" 
+     ]
     deploy:
       resources:
         limits:
-          cpus: '0.75'
-          memory: '1.5GB'
+          cpus: '0.4'
+          memory: '1.8GB'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U root"]
       interval: 10s
@@ -38,8 +43,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.25'
-          memory: '0.5GB'
+          cpus: '0.4'
+          memory: '0.4GB'
   api2:
     <<: *api
     environment:
@@ -56,7 +61,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.25'
-          memory: '0.5GB'
+          cpus: '0.3'
+          memory: '0.4GB'
+
 volumes:
   postgres-db:

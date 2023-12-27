@@ -3,7 +3,6 @@ package peopledb
 import (
 	"database/sql"
 	"errors"
-	"log"
 	"strings"
 
 	"github.com/tomazcx/rinha-backend-go/internal/entities"
@@ -16,13 +15,11 @@ type PersonRepository struct {
 func (r *PersonRepository) FindMany(t string) ([]entities.Person, error) {
 	stmt, err := r.db.Prepare("SELECT id, nome, apelido, nascimento, stack FROM pessoa WHERE searchable ILIKE '%' || $1 || '%' LIMIT 50")
 	if err != nil {
-		log.Printf("Error preparing the get many stmt: %v", err)
 		return nil, err
 	}
 
 	rows, err := stmt.Query(t)
 	if err != nil {
-		log.Printf("Error fetching many people: %v", err)
 		return nil, errors.New("Error preparing the statement")
 	}
 
@@ -49,7 +46,6 @@ func (r *PersonRepository) FindById(id string) (*entities.Person, error) {
 	var person entities.Person
 	err = stmt.QueryRow(id).Scan(&person.ID, &person.Name, &person.Nickname, &person.Birthdate, &stackStr)
 	if err != nil {
-		log.Printf("error fetching client: %v", err)
 		return nil, err
 	}
 

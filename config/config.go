@@ -7,15 +7,15 @@ import (
 var conf Cfg
 
 type Cfg struct {
-	DBName     string `mapstructure:"DB_NAME"`
-	DBPort     string `mapstructure:"DB_PORT"`
-	DBUser     string `mapstructure:"DB_USER"`
-	DBPassword string `mapstructure:"DB_PASSWORD"`
-	DBHost     string `mapstructure:"DB_HOST"`
-	WebPort    string `mapstructure:"WEB_PORT"`
+	DBName         string `mapstructure:"DB_NAME"`
+	DBPort         string `mapstructure:"DB_PORT"`
+	DBUser         string `mapstructure:"DB_USER"`
+	DBPassword     string `mapstructure:"DB_PASSWORD"`
+	DBHost         string `mapstructure:"DB_HOST"`
+	WebPort        string `mapstructure:"WEB_PORT"`
 }
 
-func LoadConfig() (*Cfg, error) {	
+func LoadConfig() (*Cfg, error) {
 	viper.SetConfigName("app_config")
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
