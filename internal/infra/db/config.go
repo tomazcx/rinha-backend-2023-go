@@ -21,8 +21,8 @@ func ConnectToDb(conf *config.Cfg) error {
 		return err
 	}
 
-	db.SetMaxOpenConns(150)
-	db.SetMaxIdleConns(150)
+	db.SetMaxOpenConns(30)
+	db.SetMaxIdleConns(30)
 
 	dbConn = db
 
